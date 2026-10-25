@@ -10,6 +10,8 @@ your Markdown source in one split and a rendered preview in the other. The previ
 - Saves and restores your existing window layout.
 - Optional ASCII fallback for terminals without box-drawing glyphs.
 
+![mdpreview.nvim preview](./mdpreview.png)
+
 ## Requirements
 
 - Neovim 0.9 or newer.
