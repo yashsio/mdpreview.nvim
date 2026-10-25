@@ -1,0 +1,186 @@
+*mdpreview.txt*  Side-by-side Markdown preview, without dependencies
+
+==============================================================================
+CONTENTS                                                        *mdpreview*
+
+1. Introduction ................................ |mdpreview-introduction|
+2. Commands .................................... |mdpreview-commands|
+3. Configuration ............................... |mdpreview-config|
+4. Highlight groups ............................ |mdpreview-highlights|
+5. Lua API ..................................... |mdpreview-api|
+6. Health ...................................... |mdpreview-health|
+7. Limitations ................................. |mdpreview-limitations|
+
+==============================================================================
+1. INTRODUCTION                                         *mdpreview-introduction*
+
+mdpreview.nvim renders Markdown into a read-only scratch buffer in a
+split next to the source, similar to `nvimdiff`. Rendering is pure Lua: there
+is no Node, Pandoc or web renderer, and nothing is written to disk.
+
+It works on unsaved buffers, follows the source cursor when configured, and
+restores your previous window layout when the preview is closed.
+
+Requires Neovim 0.9 or newer.
+
+To try a checkout without installing it: >
+
+    nvim -u /path/to/prnvim/test/minimal_init.lua /path/to/prnvim/example.md
+<
+Then run `:MarkdownPreview`. After a manual installation, run `:helptags ALL`
+to enable `:help mdpreview`; plugin managers normally do this for you.
+
+==============================================================================
+2. COMMANDS                                             *mdpreview-commands*
+
+                                                        *:MarkdownPreview*
+:MarkdownPreview        Open the preview for the current Markdown buffer, or
+                        focus it if it is already open. With the default
+                        `focus = "source"` the cursor stays in the source.
+
+                                                        *:MarkdownPreviewClose*
+:MarkdownPreviewClose   Close the preview and restore the previous layout.
+
+                                                        *:MarkdownPreviewToggle*
+:MarkdownPreviewToggle  Toggle the preview.
+
+The preview buffer's filetype is `mdpreview` and pressing `q` closes it by
+default. Commands work on buffers with `filetype=markdown` even when the file
+has not been saved yet.
+
+==============================================================================
+3. CONFIGURATION                                           *mdpreview-config*
+
+Call `setup()` once from your configuration. Every option has a default, so
+calling `setup()` is optional. >
+
+    require("mdpreview").setup({
+      split = "vertical",
+      position = "right",
+      width = 0.5,
+      height = 0.5,
+      debounce = 120,
+      syncscroll = true,
+      sync_cursor = false,
+      conceal = true,
+      show_urls = true,
+      spacing = true,
+      wrap = true,
+      winbar = true,
+      focus = "source",
+      syntax = true,
+      ascii = false,
+      keymaps = { q = "<cmd>MarkdownPreviewClose<cr>" },
+      highlights = {},
+      on_open = nil,
+      on_close = nil,
+    })
+<
+`split`            "vertical" or "horizontal".
+`position`         "right"/"left" for vertical splits, "above"/"below" for
+                   horizontal ones. Invalid combinations fall back to the
+                   default.
+`width`/`height`   Fraction of the source window (0, 1], or an absolute cell
+                   count when greater than 1.
+`debounce`         Milliseconds to wait after a change before re-rendering.
+`syncscroll`       Mirror scroll positions between the two windows.
+`sync_cursor`      Move the preview cursor with the source cursor.
+`conceal`          Strip inline Markdown markers in the preview.
+`show_urls`        Append link and image destinations.
+`spacing`          Insert blank lines around block elements.
+`wrap`             Soft-wrap long preview lines.
+`winbar`           Show a "Markdown Preview" winbar with the file name.
+`focus`            "source" (default) or "preview".
+`syntax`           Use Treesitter to highlight fenced code blocks when a
+                   parser is available. Missing parsers degrade silently.
+`ascii`            Use `-`/`|`/`+` instead of Unicode box-drawing characters.
+`keymaps`          Buffer-local normal-mode maps for the preview. This table
+                   replaces the defaults, so `keymaps = {}` disables `q`.
+`highlights`       Per-group highlight overrides (see below).
+`on_open`          `function(buf, win)` called after opening.
+`on_close`         `function()` called after closing.
+
+`setup()` may be called again while the preview is open; window options,
+size, keymaps and the rendered content are re-applied.
+
+==============================================================================
+4. HIGHLIGHT GROUPS                                    *mdpreview-highlights*
+
+Every group is defined with `default = true`, so a colourscheme or an entry in
+`highlights` always wins.
+
+Group                       Default
+------------                -------
+`MdPreviewH1`..`H6`         attributes only
+`MdPreviewBold`             bold
+`MdPreviewItalic`           italic
+`MdPreviewBoldItalic`       bold + italic
+`MdPreviewStrike`           strikethrough
+`MdPreviewCode`             link `String`
+`MdPreviewCodeBlock`        link `String`
+`MdPreviewLink`             link `Underlined`
+`MdPreviewLinkUrl`          link `Comment`
+`MdPreviewImage`            link `Special`
+`MdPreviewQuote`            link `Comment`
+`MdPreviewBullet`           link `Special`
+`MdPreviewTaskTodo`         link `Comment`
+`MdPreviewTaskDone`         bold, link `String`
+`MdPreviewHr`               link `Comment`
+`MdPreviewTableHeader`      bold
+`MdPreviewTableBorder`      link `Comment`
+`MdPreviewWinbar`           link `Title`
+
+Bold and italic nested inside each other use `MdPreviewBoldItalic`, so
+overriding that group affects both `***text***` and `**bold *and italic***`.
+
+==============================================================================
+5. LUA API                                                   *mdpreview-api*
+
+`require("mdpreview")` exposes:
+
+`setup(opts)`        Merge options, define highlights and return the config.
+`open()`             Open or focus the preview.
+`close()`            Close the preview and restore the layout.
+`toggle()`           Toggle the preview.
+`is_open()`          True when a valid preview window exists.
+`refresh()`          Force a re-render.
+`_state`             Internal state table (used by the test suite).
+
+The renderer is available separately for tests and tooling: >
+
+    local render = require("mdpreview.render")
+    local result = render.render(lines, {
+      conceal = true,
+      show_urls = true,
+      spacing = true,
+      columns = 80,
+      ascii = false,
+      syntax = true,
+    })
+    -- result.lines   string[]  preview buffer lines
+    -- result.marks   table[]   { row, col, end_col, hl, priority }
+    -- result.anchors table     source line -> preview row (0-based)
+<
+==============================================================================
+6. HEALTH                                                *mdpreview-health*
+
+Run `:checkhealth mdpreview` to show the loaded version, active options,
+whether a preview is open, and which Treesitter parsers are available.
+
+==============================================================================
+7. LIMITATIONS                                      *mdpreview-limitations*
+
+- One preview window per Neovim instance. Opening the preview for another
+  Markdown buffer retargets the existing one.
+- Text-only rendering: no images, embedded HTML, math or footnotes. HTML tags
+  are stripped; `<br>` becomes a line break.
+- Table cells support escaped pipes and `:---:` alignment, but not multiline
+  cells beyond `<br>`.
+- Inline emphasis is handled with a pragmatic delimiter parser. Common
+  nesting works (`**bold *and italic***`), but exotic delimiter runs may be
+  rendered literally.
+- Scroll synchronisation maps source lines to preview lines. Very long single
+  blocks (code, tables) and wrapped lines are approximated.
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:

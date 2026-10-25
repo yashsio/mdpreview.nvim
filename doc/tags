@@ -1,0 +1,12 @@
+:MarkdownPreview	mdpreview.txt	/*:MarkdownPreview*
+:MarkdownPreviewClose	mdpreview.txt	/*:MarkdownPreviewClose*
+:MarkdownPreviewToggle	mdpreview.txt	/*:MarkdownPreviewToggle*
+mdpreview	mdpreview.txt	/*mdpreview*
+mdpreview-api	mdpreview.txt	/*mdpreview-api*
+mdpreview-commands	mdpreview.txt	/*mdpreview-commands*
+mdpreview-config	mdpreview.txt	/*mdpreview-config*
+mdpreview-health	mdpreview.txt	/*mdpreview-health*
+mdpreview-highlights	mdpreview.txt	/*mdpreview-highlights*
+mdpreview-introduction	mdpreview.txt	/*mdpreview-introduction*
+mdpreview-limitations	mdpreview.txt	/*mdpreview-limitations*
+mdpreview.txt	mdpreview.txt	/*mdpreview.txt*
