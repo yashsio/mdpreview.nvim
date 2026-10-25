@@ -25,7 +25,7 @@ Requires Neovim 0.9 or newer.
 
 To try a checkout without installing it: >
 
-    nvim -u /path/to/prnvim/test/minimal_init.lua /path/to/prnvim/example.md
+    nvim -u /path/to/mdpreview.nvim/test/minimal_init.lua /path/to/mdpreview.nvim/README.md
 <
 Then run `:MarkdownPreview`. After a manual installation, run `:helptags ALL`
 to enable `:help mdpreview`; plugin managers normally do this for you.

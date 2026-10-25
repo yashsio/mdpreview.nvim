@@ -22,7 +22,7 @@ your Markdown source in one split and a rendered preview in the other. The previ
 From a checkout of this repository:
 
 ```sh
-nvim -u test/minimal_init.lua example.md
+nvim -u test/minimal_init.lua README.md
 ```
 
 Then run `:MarkdownPreview`. The minimal init only adds this checkout to
@@ -30,7 +30,7 @@ Then run `:MarkdownPreview`. The minimal init only adds this checkout to
 own configuration instead:
 
 ```sh
-nvim --cmd 'set runtimepath^=/path/to/mdpreview.md' example.md
+nvim --cmd 'set runtimepath^=/path/to/mdpreview.nvim' README.md
 ```
 
 ### lazy.nvim

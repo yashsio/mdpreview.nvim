@@ -12,7 +12,7 @@ function M.check()
     health = ok and mod or nil
   end
   if not health then
-    vim.notify("[markdown-preview] checkhealth is unavailable in this Neovim", vim.log.levels.WARN)
+    vim.notify("[mdpreview] checkhealth is unavailable in this Neovim", vim.log.levels.WARN)
     return
   end
   if not health.start then
@@ -25,7 +25,7 @@ function M.check()
       info = health.report_info,
     }
   end
-  health.start("markdown-preview.nvim")
+  health.start("mdpreview.nvim")
 
   local ok, md = pcall(require, "mdpreview")
   if not ok then

@@ -1,4 +1,4 @@
--- Configuration defaults and merging for markdown-preview.nvim.
+-- Configuration defaults and merging for mdpreview.nvim.
 local M = {}
 
 ---@class MdPreviewOpts

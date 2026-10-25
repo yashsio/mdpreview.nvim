@@ -64,7 +64,7 @@
             pkgs.stylua
           ];
           shellHook = ''
-            echo "mkdpreview.nvim development shell"
+            echo "mdpreview.nvim development shell"
             echo "  run the tests: bash test/run.sh"
           '';
         };

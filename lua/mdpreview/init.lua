@@ -1,4 +1,4 @@
--- markdown-preview.nvim -- public API.
+-- mdpreview.nvim -- public API.
 --
 -- A nvimdiff-inspired side-by-side Markdown preview. The source buffer is left
 -- untouched and rendered into a read-only scratch buffer in an adjacent split.
@@ -34,7 +34,7 @@ M._state = state
 local md_exts = { md = true, markdown = true, mkd = true, mdx = true }
 
 local function notify(msg, level)
-  vim.notify("[markdown-preview] " .. msg, level or vim.log.levels.INFO)
+  vim.notify("[mdpreview] " .. msg, level or vim.log.levels.INFO)
 end
 
 ---@param buf integer
